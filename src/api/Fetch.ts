@@ -20,7 +20,7 @@
 /* Module Dependencies */
 import fetch from 'cross-fetch';
 /* Utilities */
-import { getTypeof, makeQueryString } from '../utils';
+import { getTypeof } from '../utils/getTypeof';
 /* Types */
 import { QueryStringParameters } from '../utils/types';
 
@@ -44,47 +44,7 @@ export const DEFAULT_CONFIG: FetchConfig = {
   baseUrl: BASE_URL
 };
 
-/*****************
- * Fetch Class
- ****************/
-
-/**
- * Class wrapper containing API wrapper HTTP Fetch logic.
- *
- * > **Static Methods**:
- * > - [buildQueryString](#buildQueryString)
- * > - [get](#get)
- *
- * @param {module:api/Fetch.FetchConfig} [userConfig] - User configuration options to construct the class with.
- * @category API
- */
-export class Fetch {
-  apiResponseFormat: string;
-  baseUrl?: string;
-  options?: FetchRequestOptions;
-
-  constructor(userConfig?: FetchConfig) {
-    let finalConfig: FetchConfig;
-
-    /* userConfig takes precedence over DEFAULT_CONFIG */
-    if (userConfig && getTypeof(userConfig) === 'object') {
-      finalConfig = {
-        ...DEFAULT_CONFIG,
-        ...userConfig,
-        options: { ...DEFAULT_CONFIG.options, ...userConfig.options }
-      };
-    } else {
-      finalConfig = { ...DEFAULT_CONFIG };
-    }
-
-    /** @private */
-    this.apiResponseFormat = 'json';
-    /** @private */
-    this.baseUrl = finalConfig.baseUrl;
-    /** @private */
-    this.options = finalConfig.options;
-  }
-
+export const Fetch = {
   /**
    * Builds a query string from QueryStringParameters.
    *
@@ -105,15 +65,17 @@ export class Fetch {
      */
     if (!params || getTypeof(params) !== 'object') {
       params = {
-        format: this.apiResponseFormat
+        format: DEFAULT_CONFIG.apiResponseFormat
       };
     } else {
-      params = { ...params, format: this.apiResponseFormat };
+      params = { ...params, format: DEFAULT_CONFIG.apiResponseFormat };
     }
 
     /* Return the completed query string */
-    return await makeQueryString(params, allowEmptyStringValues);
-  }
+    return await import('../utils/makeQueryString').then(module =>
+      module.makeQueryString(params, allowEmptyStringValues)
+    );
+  },
 
   /**
    * Uses the `cross-fetch` npm package to send HTTP requests and retrieve data from an API.
@@ -146,11 +108,8 @@ export class Fetch {
       );
     }
 
-    /* Combine user provided 'options' and class property 'this.options', user options overwrite class options */
-    const combinedOptions = { ...this.options, ...options };
-
     /* Use the cross-fetch package to perform an HTTP request */
-    const response: Response = await fetch(url, combinedOptions)
+    const response: Response = await fetch(url, options)
       .then(result => {
         if (!result?.status || result.status >= 400) {
           throw new Error(
@@ -183,39 +142,11 @@ export class Fetch {
     /* Return the completed ApiResponse */
     return Promise.resolve(finalResult);
   }
-}
+};
 
 /*****************
  * Types
  ****************/
-
-/**
- * Results from NHSTA API Actions.
- *
- * @memberof module:api/Fetch
- */
-export type NhstaResults = Array<
-  import('./actions/DecodeVin').DecodeVinResults
-  // | ResultDecodeVinValues
-  // | ResultDecodeWMI
-  // | ResultGetWMIsForManufacturer
-  // | ResultGetAllMakes
-  // | ResultGetParts
-  // | ResultGetAllManufacturers
-  // | ResultGetManufacturerDetails
-  // | ResultGetMakeForManufacturer
-  // | ResultGetMakesForManufacturerAndYear
-  // | ResultGetMakesForVehicleType
-  // | ResultGetVehicleTypesForMake
-  // | ResultGetVehicleTypesForMakeId
-  // | ResultGetEquipmentPlantCodes
-  // | ResultGetModelsForMake
-  // | ResultGetModelsForMakeYear
-  // | ResultGetModelsForMakeIdYear
-  // | ResultGetVehicleVariableList
-  // | ResultGetVehicleVariableValuesList
-  // | ResultGetCanadianVehicleSpecifications
->;
 
 /**
  * Various fetch request body types.

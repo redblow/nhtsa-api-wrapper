@@ -31,10 +31,10 @@
     </h2>
   </body>
   <script type="text/javascript">
-    const client = NHTSA.Client;
+    // const client = NHTSA.Client;
 
     document.getElementById('client').addEventListener('click', async function() {
-    const result = await client.DecodeVin('3VWD07AJ5EM388202').catch(err => err);
+    const result = await NHTSA.DecodeVin('3VWD07AJ5EM388202').catch(err => err);
     console.log(result);
     document.getElementById('clientResults').innerText = result;
     });

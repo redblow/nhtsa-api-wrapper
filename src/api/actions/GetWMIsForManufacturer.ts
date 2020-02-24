@@ -4,7 +4,7 @@
  * @description GetWMIsForManufacturer NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetWMIsForManufacturer](module-api_actions_GetWMIsForManufacturer.GetWMIsForManufacturer.html)
+ * > - Method: [GetWMIsForManufacturer](#.GetWMIsForManufacturer)
  * >
  * > **Types**
  * > - Type: [GetWMIsForManufacturerResponse](#GetWMIsForManufacturerResponse)
@@ -13,63 +13,52 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * Provides information on the World Manufacturer Identifier (WMI) for a specified `manufacturer`.
+ * - Only WMIs registered in vPICList are displayed.
+ * - `manufacturer` can be a partial name, or a full name for more specificity
+ *   (e.g., "Merc", "Mercedes Benz", etc.).
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {string|number} manufacturer - Manufacturer Name.
+ * @returns {(Promise<GetWMIsForManufacturerResponse | Error>)} Api Response object.
  */
-export class GetWMIsForManufacturer extends Fetch {
-  /**
-   * Provides information on the World Manufacturer Identifier (WMI) for a specified `manufacturer`.
-   * - Only WMIs registered in vPICList are displayed.
-   * - `manufacturer` can be a partial name, or a full name for more specificity
-   *   (e.g., "Merc", "Mercedes Benz", etc.).
-   *
-   * @async
-   * @param {string|number} manufacturer - Manufacturer Name.
-   * @returns {(Promise<GetWMIsForManufacturerResponse | Error>)} Api Response object.
-   */
-  async GetWMIsForManufacturer(
-    manufacturer: string
-  ): Promise<GetWMIsForManufacturerResponse | Error> {
-    const action = 'GetWMIsForManufacturer';
+export const GetWMIsForManufacturer = async (
+  manufacturer: string
+): Promise<GetWMIsForManufacturerResponse | Error> => {
+  const action = 'GetWMIsForManufacturer';
 
-    /* Runtime typechecking */
-    const typeofManufacturer = getTypeof(manufacturer);
-    if (typeofManufacturer !== 'string') {
-      return Promise.reject(
-        new Error(
-          `${action}, "manufacturer" argument is required and must be of type string, got: ` +
-            `<${typeofManufacturer}> ${manufacturer}`
-        )
-      );
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Runtime typechecking */
+  const typeofManufacturer = getTypeof(manufacturer);
+  if (typeofManufacturer !== 'string') {
+    return Promise.reject(
+      new Error(
+        `${action}, "manufacturer" argument is required and must be of type string, got: ` +
+          `<${typeofManufacturer}> ${manufacturer}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}/${manufacturer}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}/${manufacturer}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetWMIsForManufacturerResponse}.Results' array.

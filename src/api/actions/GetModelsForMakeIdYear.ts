@@ -4,7 +4,7 @@
  * @description GetModelsForMakeIdYear NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetModelsForMakeIdYear](module-api_actions_GetModelsForMakeIdYear.GetModelsForMakeIdYear.html)
+ * > - Method: [GetModelsForMakeIdYear](#.GetModelsForMakeIdYear)
  * >
  * > **Types**
  * > - Type: [GetModelsForMakeIdYearResponse](#GetModelsForMakeIdYearResponse)
@@ -13,127 +13,116 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This returns the Models in the vPIC dataset for a specified Model Year
+ * and Make whose name is LIKE the Make in the vPIC Dataset.
+ *   - `params.makeId` is a number and is a required query parameter.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
+ * A minimum of one of the following are required (or a combination of both):
+ *   - `params.modelYear` is a number (greater than 1995)
+ *   - `params.vehicleType` can be a partial name, or a full name for more specificity
+ *     (e.g., "Vehicle", "Moto", "Low Speed Vehicle", etc.).
  *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {object} params - Query Search Parameters to append to the URL.
+ * @param {number} params.makeId - Make ID to search.
+ * @param {number} [params.modelYear] - A number representing the model year to search (greater than 1995).
+ * @param {string} [params.vehicleType] - String representing the vehicle type to search.
+ * @returns {(Promise<GetModelsForMakeIdYearResponse | Error>)} Api Response object.
  */
-export class GetModelsForMakeIdYear extends Fetch {
-  /**
-   * This returns the Models in the vPIC dataset for a specified Model Year
-   * and Make whose name is LIKE the Make in the vPIC Dataset.
-   *   - `params.makeId` is a number and is a required query parameter.
-   *
-   * A minimum of one of the following are required (or a combination of both):
-   *   - `params.modelYear` is a number (greater than 1995)
-   *   - `params.vehicleType` can be a partial name, or a full name for more specificity
-   *     (e.g., "Vehicle", "Moto", "Low Speed Vehicle", etc.).
-   *
-   * @async
-   * @param {object} params - Query Search Parameters to append to the URL.
-   * @param {number} params.makeId - Make ID to search.
-   * @param {number} [params.modelYear] - A number representing the model year to search (greater than 1995).
-   * @param {string} [params.vehicleType] - String representing the vehicle type to search.
-   * @returns {(Promise<GetModelsForMakeIdYearResponse | Error>)} Api Response object.
-   */
-  async GetModelsForMakeIdYear(params: {
-    makeId: number;
-    modelYear?: number;
-    vehicleType?: string;
-  }): Promise<GetModelsForMakeIdYearResponse | Error> {
-    const action = 'GetModelsForMakeIdYear';
+export const GetModelsForMakeIdYear = async (params: {
+  makeId: number;
+  modelYear?: number;
+  vehicleType?: string;
+}): Promise<GetModelsForMakeIdYearResponse | Error> => {
+  const action = 'GetModelsForMakeIdYear';
 
-    const makeId: number = params?.makeId;
-    const modelYear: number | undefined = params?.modelYear;
-    const vehicleType: string | undefined = params?.vehicleType;
+  const makeId: number = params?.makeId;
+  const modelYear: number | undefined = params?.modelYear;
+  const vehicleType: string | undefined = params?.vehicleType;
 
-    /* Valid params object */
-    const typeofParams = getTypeof(params);
-    if (typeofParams !== 'object') {
-      return Promise.reject(
-        new Error(
-          `${action}, "params" argument must be of type object, got: ` +
-            `<${typeofParams}> ${params}`
-        )
-      );
-    }
-    /* Required makeId param of type number */
-    const typeofMakeId = getTypeof(makeId);
-    if (typeofMakeId !== 'number') {
-      return Promise.reject(
-        new Error(
-          `${action}, "params.makeId" argument is required and must be of type number, got: ` +
-            `<${typeofMakeId}> ${makeId}`
-        )
-      );
-    }
-    /* At least one of modelYear or vehicleType params is required */
-    if (!modelYear && !vehicleType) {
-      return Promise.reject(
-        new Error(
-          `${action}, either one of "params.modelYear" or "params.vehicleType" is required, got: ` +
-            `${modelYear} | ${vehicleType}`
-        )
-      );
-    }
-    /* valid modelYear param of type number */
-    const typeofModelYear = getTypeof(modelYear);
-    if (modelYear && typeofModelYear !== 'number') {
-      return Promise.reject(
-        new Error(
-          `${action}, "params.modelYear" must be of type number, got: ` +
-            `<${typeofModelYear}> ${modelYear}`
-        )
-      );
-    }
-    /* valid vehicleType param of type string */
-    const typeofVehicleType = getTypeof(vehicleType);
-    if (vehicleType && typeofVehicleType !== 'string') {
-      return Promise.reject(
-        new Error(
-          `${action}, "params.vehicleType" must be of type string, got: ` +
-            `<${typeofVehicleType}> ${vehicleType}`
-        )
-      );
-    }
-
-    /* Beginning of the the actionUrl */
-    let actionUrl = `${action}/makeId/${makeId}/`;
-
-    /* Append params.modelYear and params.vehicleType to the actionUrl, at least one is required by the API */
-    if (modelYear && vehicleType) {
-      actionUrl += `modelYear/${modelYear}/vehicleType/${vehicleType}`;
-    } else if (modelYear) {
-      actionUrl += `modelYear/${modelYear}`;
-    } else {
-      actionUrl += `vehicleType/${vehicleType}`;
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch((err: Error) =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Valid params object */
+  const typeofParams = getTypeof(params);
+  if (typeofParams !== 'object') {
+    return Promise.reject(
+      new Error(
+        `${action}, "params" argument must be of type object, got: ` +
+          `<${typeofParams}> ${params}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${actionUrl}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch((err: Error) =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+  /* Required makeId param of type number */
+  const typeofMakeId = getTypeof(makeId);
+  if (typeofMakeId !== 'number') {
+    return Promise.reject(
+      new Error(
+        `${action}, "params.makeId" argument is required and must be of type number, got: ` +
+          `<${typeofMakeId}> ${makeId}`
+      )
+    );
+  }
+  /* At least one of modelYear or vehicleType params is required */
+  if (!modelYear && !vehicleType) {
+    return Promise.reject(
+      new Error(
+        `${action}, either one of "params.modelYear" or "params.vehicleType" is required, got: ` +
+          `${modelYear} | ${vehicleType}`
+      )
+    );
+  }
+  /* valid modelYear param of type number */
+  const typeofModelYear = getTypeof(modelYear);
+  if (modelYear && typeofModelYear !== 'number') {
+    return Promise.reject(
+      new Error(
+        `${action}, "params.modelYear" must be of type number, got: ` +
+          `<${typeofModelYear}> ${modelYear}`
+      )
+    );
+  }
+  /* valid vehicleType param of type string */
+  const typeofVehicleType = getTypeof(vehicleType);
+  if (vehicleType && typeofVehicleType !== 'string') {
+    return Promise.reject(
+      new Error(
+        `${action}, "params.vehicleType" must be of type string, got: ` +
+          `<${typeofVehicleType}> ${vehicleType}`
+      )
+    );
+  }
+
+  /* Beginning of the the actionUrl */
+  let actionUrl = `${action}/makeId/${makeId}/`;
+
+  /* Append params.modelYear and params.vehicleType to the actionUrl, at least one is required by the API */
+  if (modelYear && vehicleType) {
+    actionUrl += `modelYear/${modelYear}/vehicleType/${vehicleType}`;
+  } else if (modelYear) {
+    actionUrl += `modelYear/${modelYear}`;
+  } else {
+    actionUrl += `vehicleType/${vehicleType}`;
+  }
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch((err: Error) =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${actionUrl}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch((err: Error) =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetModelsForMakeIdYearResponse}.Results' array.

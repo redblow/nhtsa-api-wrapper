@@ -4,7 +4,7 @@
  * @description GetVehicleVariableList NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetVehicleVariableList](module-api_actions_GetVehicleVariableList.GetVehicleVariableList.html)
+ * > - Method: [GetVehicleVariableList](#.GetVehicleVariableList)
  * >
  * > **Types**
  * > - Type: [GetVehicleVariableListResponse](#GetVehicleVariableListResponse)
@@ -13,47 +13,36 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This provides a list of all the Vehicle related variables that are in the vPIC dataset.
+ * - Information on the name, description and the type of the variable is provided.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @returns {(Promise<GetVehicleVariableListResponse | Error>)} Api Response object.
  */
-export class GetVehicleVariableList extends Fetch {
-  /**
-   * This provides a list of all the Vehicle related variables that are in the vPIC dataset.
-   * - Information on the name, description and the type of the variable is provided.
-   *
-   * @async
-   * @returns {(Promise<GetVehicleVariableListResponse | Error>)} Api Response object.
-   */
-  public async GetVehicleVariableList(): Promise<
-    GetVehicleVariableListResponse | Error
-  > {
-    const action = 'GetVehicleVariableList';
+export const GetVehicleVariableList = async (): Promise<
+  GetVehicleVariableListResponse | Error
+> => {
+  const action = 'GetVehicleVariableList';
 
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
-      )
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
-  }
-}
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetVehicleVariableListResponse}.Results' array.

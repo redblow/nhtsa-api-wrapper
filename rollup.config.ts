@@ -7,6 +7,7 @@ import gzipPlugin from 'rollup-plugin-gzip';
 import sourceMaps from 'rollup-plugin-sourcemaps';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
+import visualizer from 'rollup-plugin-visualizer';
 
 import pkg from './package.json';
 
@@ -18,7 +19,9 @@ const baseDir = isDev ? 'dev/dist/' : 'dist/';
 const tsconfig = isDev ? './tsconfig.dev.json' : './tsconfig.json';
 
 const treeShakeBundles = {
-  index: 'src/index.ts'
+  index: 'src/api/index.ts'
+  // NHTSA: 'src/api/NHTSA.ts',
+  // isValidVin: 'src/utils/isValidVin.ts'
   // NHTSA: 'src/api/NHTSA.ts',
   // isValidVin: 'src/utils/isValidVin.ts'
 };
@@ -30,11 +33,12 @@ const plugins = [
   typescript({
     tsconfig,
     typescript: require('typescript'),
-    useTsconfigDeclarationDir: true,
-    exclude: ['node_modules']
+    useTsconfigDeclarationDir: true
+    // exclude: ['node_modules']
   }),
   sourceMaps(),
-  babel({ include: 'node_modules/**', extensions: ['.js', '.ts'] })
+  babel({ extensions: ['.js', '.ts'] })
+  // visualizer()
 ];
 
 export default [
@@ -52,7 +56,7 @@ export default [
         file: `${baseDir}bundle.min.js`,
         name: libraryName,
         format: 'umd',
-        esModule: false,
+        // esModule: false,
         globals: {
           'cross-fetch': 'fetch'
         },
@@ -106,7 +110,7 @@ export default [
         globals: {
           'cross-fetch': 'fetch'
         },
-        chunkFileNames: 'chunk-[format]-[hash].js',
+        // chunkFileNames: 'chunk-[format]-[hash].js',
         sourcemap: true,
         plugins: [
           terser({
@@ -121,6 +125,10 @@ export default [
      * which external modules to include in the bundle
      * https://github.com/rollup/rollup-plugin-node-resolve#usage
      */
-    plugins: [resolve({ preferBuiltins: true, browser: true }), ...plugins]
+    plugins: [
+      visualizer({ sourcemap: true }),
+      resolve({ preferBuiltins: true, browser: true }),
+      ...plugins
+    ]
   }
 ];

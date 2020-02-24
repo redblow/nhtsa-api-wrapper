@@ -1,2 +1,4 @@
-export { isValidVin } from './utils';
-export { Client, NHTSA } from './api';
+import { Client } from './api/Client';
+
+// export { isValidVin } from './utils';
+export default Client;

@@ -4,7 +4,7 @@
  * @description GetManufacturerDetails NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetManufacturerDetails](module-api_actions_GetManufacturerDetails.GetManufacturerDetails.html)
+ * > - Method: [GetManufacturerDetails](#.GetManufacturerDetails)
  * >
  * > **Types**
  * > - Type: [GetManufacturerDetailsResponse](#GetManufacturerDetailsResponse)
@@ -13,64 +13,53 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This provides the details for a specific manufacturer that is requested.
+ * - If supplied `manufacturer` is a number - method will do exact match on Manufacturer's Id.
+ * - If supplied `manufacturer` is a string - it will look for manufacturers whose name is LIKE the provided name,
+ *   (it accepts a partial manufacturer name as an input).
+ * - Multiple results are returned in case of multiple matches.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {string|number} manufacturer - Manufacturer Name (string) or Manufacturer ID (number).
+ * @returns {(Promise<GetManufacturerDetailsResponse | Error>)} Api Response object.
  */
-export class GetManufacturerDetails extends Fetch {
-  /**
-   * This provides the details for a specific manufacturer that is requested.
-   * - If supplied `manufacturer` is a number - method will do exact match on Manufacturer's Id.
-   * - If supplied `manufacturer` is a string - it will look for manufacturers whose name is LIKE the provided name,
-   *   (it accepts a partial manufacturer name as an input).
-   * - Multiple results are returned in case of multiple matches.
-   *
-   * @async
-   * @param {string|number} manufacturer - Manufacturer Name (string) or Manufacturer ID (number).
-   * @returns {(Promise<GetManufacturerDetailsResponse | Error>)} Api Response object.
-   */
-  public async GetManufacturerDetails(
-    manufacturer: string | number
-  ): Promise<GetManufacturerDetailsResponse | Error> {
-    const action = 'GetManufacturerDetails';
+export const GetManufacturerDetails = async (
+  manufacturer: string | number
+): Promise<GetManufacturerDetailsResponse | Error> => {
+  const action = 'GetManufacturerDetails';
 
-    /* Runtime typechecking */
-    const typeofManufacturer = getTypeof(manufacturer);
-    if (typeofManufacturer !== 'string' && typeofManufacturer !== 'number') {
-      return Promise.reject(
-        new Error(
-          `${action}, "manufacturer" argument is required and must be of type string or number, got: ` +
-            `<${typeofManufacturer}> ${manufacturer}`
-        )
-      );
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Runtime typechecking */
+  const typeofManufacturer = getTypeof(manufacturer);
+  if (typeofManufacturer !== 'string' && typeofManufacturer !== 'number') {
+    return Promise.reject(
+      new Error(
+        `${action}, "manufacturer" argument is required and must be of type string or number, got: ` +
+          `<${typeofManufacturer}> ${manufacturer}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}/${manufacturer}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}/${manufacturer}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetManufacturerDetailsResponse}.Results' array.

@@ -4,7 +4,7 @@
  * @description GetAllMakes NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetAllMakes](module-api_actions_GetAllMakes.GetAllMakes.html)
+ * > - Method: [GetAllMakes](#.GetAllMakes)
  * >
  * > **Types**
  * > - Type: [GetAllMakesResponse](#GetAllMakesResponse)
@@ -13,44 +13,33 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This provides a list of all the Makes available in the vPIC Dataset.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @returns {(Promise<GetAllMakesResponse | Error>)} Api Response object.
  */
-export class GetAllMakes extends Fetch {
-  /**
-   * This provides a list of all the Makes available in the vPIC Dataset.
-   *
-   * @async
-   * @returns {(Promise<GetAllMakesResponse | Error>)} Api Response object.
-   */
-  public async GetAllMakes(): Promise<GetAllMakesResponse | Error> {
-    const action = 'GetAllMakes';
+export const GetAllMakes = async (): Promise<GetAllMakesResponse | Error> => {
+  const action = 'GetAllMakes';
 
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
-      )
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
-  }
-}
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetAllMakesResponse}.Results' array.

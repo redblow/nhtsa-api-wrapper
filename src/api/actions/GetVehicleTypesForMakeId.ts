@@ -4,7 +4,7 @@
  * @description GetVehicleTypesForMakeId NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetVehicleTypesForMakeId](module-api_actions_GetVehicleTypesForMakeId.GetVehicleTypesForMakeId.html)
+ * > - Method: [GetVehicleTypesForMakeId](#.GetVehicleTypesForMakeId)
  * >
  * > **Types**
  * > - Type: [GetVehicleTypesForMakeIdResponse](#GetVehicleTypesForMakeIdResponse)
@@ -13,61 +13,50 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This returns all the Vehicle Types in the vPIC dataset for a specified Make and
+ * whose ID equals the make ID in the vPIC Dataset.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {number} makeID - Vehicle make ID.
+ * @returns {(Promise<GetVehicleTypesForMakeIdResponse | Error>)} Api Response object.
  */
-export class GetVehicleTypesForMakeId extends Fetch {
-  /**
-   * This returns all the Vehicle Types in the vPIC dataset for a specified Make and
-   * whose ID equals the make ID in the vPIC Dataset.
-   *
-   * @async
-   * @param {number} makeID - Vehicle make ID.
-   * @returns {(Promise<GetVehicleTypesForMakeIdResponse | Error>)} Api Response object.
-   */
-  async GetVehicleTypesForMakeId(
-    makeID: number
-  ): Promise<GetVehicleTypesForMakeIdResponse | Error> {
-    const action = 'GetVehicleTypesForMakeId';
+export const GetVehicleTypesForMakeId = async (
+  makeID: number
+): Promise<GetVehicleTypesForMakeIdResponse | Error> => {
+  const action = 'GetVehicleTypesForMakeId';
 
-    /* Runtime typechecking */
-    const typeofMakeId = getTypeof(makeID);
-    if (typeofMakeId !== 'number') {
-      return Promise.reject(
-        new Error(
-          `${action}, "makeId" argument is required and must be of type number, got: ` +
-            `<${typeofMakeId}> ${makeID}`
-        )
-      );
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Runtime typechecking */
+  const typeofMakeId = getTypeof(makeID);
+  if (typeofMakeId !== 'number') {
+    return Promise.reject(
+      new Error(
+        `${action}, "makeId" argument is required and must be of type number, got: ` +
+          `<${typeofMakeId}> ${makeID}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}/${makeID}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}/${makeID}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetVehicleTypesForMakeIdResponse}.Results' array.

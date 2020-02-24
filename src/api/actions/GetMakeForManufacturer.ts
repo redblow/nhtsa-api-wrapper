@@ -4,7 +4,7 @@
  * @description GetMakeForManufacturer NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetMakeForManufacturer](module-api_actions_GetMakeForManufacturer.GetMakeForManufacturer.html)
+ * > - Method: [GetMakeForManufacturer](#.GetMakeForManufacturer)
  * >
  * > **Types**
  * > - Type: [GetMakeForManufacturerResponse](#GetMakeForManufacturerResponse)
@@ -13,66 +13,55 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This returns all the Makes in the vPIC dataset for a specified manufacturer that is requested.
+ * - If supplied `manufacturer` is a number - method will do exact match on Manufacturer's Id.
+ * - If supplied `manufacturer` is a string - it will look for manufacturers whose name is LIKE the provided name
+ *   (it accepts a partial manufacturer name as an input).
+ * - `manufacturer` name can be a partial name, or a full name for more specificity
+ *   (e.g., "988", "HONDA", "HONDA OF CANADA MFG., INC.", etc.).
+ * - Multiple results are returned in case of multiple matches.
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {string|number} manufacturer - Manufacturer Name (string) or Manufacturer ID (number).
+ * @returns {(Promise<GetMakeForManufacturer | Error>)} Api Response object.
  */
-export class GetMakeForManufacturer extends Fetch {
-  /**
-   * This returns all the Makes in the vPIC dataset for a specified manufacturer that is requested.
-   * - If supplied `manufacturer` is a number - method will do exact match on Manufacturer's Id.
-   * - If supplied `manufacturer` is a string - it will look for manufacturers whose name is LIKE the provided name
-   *   (it accepts a partial manufacturer name as an input).
-   * - `manufacturer` name can be a partial name, or a full name for more specificity
-   *   (e.g., "988", "HONDA", "HONDA OF CANADA MFG., INC.", etc.).
-   * - Multiple results are returned in case of multiple matches.
-   *
-   * @async
-   * @param {string|number} manufacturer - Manufacturer Name (string) or Manufacturer ID (number).
-   * @returns {(Promise<GetMakeForManufacturer | Error>)} Api Response object.
-   */
-  async GetMakeForManufacturer(
-    manufacturer: string | number
-  ): Promise<GetMakeForManufacturerResponse | Error> {
-    const action = 'GetMakeForManufacturer';
+export const GetMakeForManufacturer = async (
+  manufacturer: string | number
+): Promise<GetMakeForManufacturerResponse | Error> => {
+  const action = 'GetMakeForManufacturer';
 
-    /* Runtime typechecking */
-    const typeofManufacturer = getTypeof(manufacturer);
-    if (typeofManufacturer !== 'string' && typeofManufacturer !== 'number') {
-      return Promise.reject(
-        new Error(
-          `${action}, "manufacturer" argument is required and must be of type string or number, got: ` +
-            `<${typeofManufacturer}> ${manufacturer}`
-        )
-      );
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch(err =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Runtime typechecking */
+  const typeofManufacturer = getTypeof(manufacturer);
+  if (typeofManufacturer !== 'string' && typeofManufacturer !== 'number') {
+    return Promise.reject(
+      new Error(
+        `${action}, "manufacturer" argument is required and must be of type string or number, got: ` +
+          `<${typeofManufacturer}> ${manufacturer}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}/${manufacturer}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch(err =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch(err =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}/${manufacturer}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch(err =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetMakeForManufacturerResponse}.Results' array.

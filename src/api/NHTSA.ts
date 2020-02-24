@@ -6,7 +6,31 @@
  * > - Class: [NHTSA](NHTSA.html#NHTSA) - Class that implements all NHTSA API Actions
  */
 
-import { Fetch /* Class */, FetchConfig /* Type */ } from './Fetch';
+import { isValidVin } from '../utils/isValidVin';
+/*
+import { DecodeVin } from './actions/DecodeVin';
+import { DecodeVinExtended } from './actions/DecodeVinExtended';
+import { DecodeVinValues } from './actions/DecodeVinValues';
+import { DecodeVinValuesExtended } from './actions/DecodeVinValuesExtended';
+import { DecodeWMI } from './actions/DecodeWMI';
+import { GetAllMakes } from './actions/GetAllMakes';
+import { GetAllManufacturers } from './actions/GetAllManufacturers';
+import { GetCanadianVehicleSpecifications } from './actions/GetCanadianVehicleSpecifications';
+import { GetEquipmentPlantCodes } from './actions/GetEquipmentPlantCodes';
+import { GetMakeForManufacturer } from './actions/GetMakeForManufacturer';
+import { GetMakesForManufacturerAndYear } from './actions/GetMakesForManufacturerAndYear';
+import { GetMakesForVehicleType } from './actions/GetMakesForVehicleType';
+import { GetManufacturerDetails } from './actions/GetManufacturerDetails';
+import { GetModelsForMake } from './actions/GetModelsForMake';
+import { GetModelsForMakeId } from './actions/GetModelsForMakeId';
+import { GetModelsForMakeIdYear } from './actions/GetModelsForMakeIdYear';
+import { GetModelsForMakeYear } from './actions/GetModelsForMakeYear';
+import { GetParts } from './actions/GetParts';
+import { GetVehicleTypesForMake } from './actions/GetVehicleTypesForMake';
+import { GetVehicleTypesForMakeId } from './actions/GetVehicleTypesForMakeId';
+import { GetVehicleVariableList } from './actions/GetVehicleVariableList';
+import { GetVehicleVariableValuesList } from './actions/GetVehicleVariableValuesList';
+import { GetWMIsForManufacturer } from './actions/GetWMIsForManufacturer';
 
 /* Import implemented API Action classes */
 import {
@@ -64,93 +88,32 @@ import {
  * @implements {module:api/actions/GetVehicleVariableValuesList.GetVehicleVariableValuesList}
  * @implements {module:api/actions/GetWMIsForManufacturer.GetWMIsForManufacturer}
  */
-class NHTSA extends Fetch
-  implements
-    DecodeVin,
-    DecodeVinExtended,
-    DecodeVinValues,
-    DecodeVinValuesExtended,
-    DecodeWMI,
-    GetAllMakes,
-    GetAllManufacturers,
-    GetCanadianVehicleSpecifications,
-    GetEquipmentPlantCodes,
-    GetMakeForManufacturer,
-    GetMakesForManufacturerAndYear,
-    GetMakesForVehicleType,
-    GetManufacturerDetails,
-    GetModelsForMake,
-    GetModelsForMakeId,
-    GetModelsForMakeIdYear,
-    GetModelsForMakeYear,
-    GetParts,
-    GetVehicleTypesForMake,
-    GetVehicleTypesForMakeId,
-    GetVehicleVariableList,
-    GetVehicleVariableValuesList,
-    GetWMIsForManufacturer {
-  constructor(userConfig?: FetchConfig) {
-    super(userConfig);
-  }
+class NHTSA {
+  isValidVin = isValidVin;
 
-  DecodeVin = DecodeVin.prototype.DecodeVin;
-
-  DecodeVinValues = DecodeVinValues.prototype.DecodeVinValues;
-
-  DecodeVinExtended = DecodeVinExtended.prototype.DecodeVinExtended;
-
-  DecodeVinValuesExtended =
-    DecodeVinValuesExtended.prototype.DecodeVinValuesExtended;
-
-  DecodeWMI = DecodeWMI.prototype.DecodeWMI;
-
-  GetAllMakes = GetAllMakes.prototype.GetAllMakes;
-
-  GetAllManufacturers = GetAllManufacturers.prototype.GetAllManufacturers;
-
-  GetCanadianVehicleSpecifications =
-    GetCanadianVehicleSpecifications.prototype.GetCanadianVehicleSpecifications;
-
-  GetEquipmentPlantCodes =
-    GetEquipmentPlantCodes.prototype.GetEquipmentPlantCodes;
-
-  GetMakeForManufacturer =
-    GetMakeForManufacturer.prototype.GetMakeForManufacturer;
-
-  GetMakesForManufacturerAndYear =
-    GetMakesForManufacturerAndYear.prototype.GetMakesForManufacturerAndYear;
-
-  GetMakesForVehicleType =
-    GetMakesForVehicleType.prototype.GetMakesForVehicleType;
-
-  GetManufacturerDetails =
-    GetManufacturerDetails.prototype.GetManufacturerDetails;
-
-  GetModelsForMake = GetModelsForMake.prototype.GetModelsForMake;
-
-  GetModelsForMakeId = GetModelsForMakeId.prototype.GetModelsForMakeId;
-
-  GetModelsForMakeIdYear =
-    GetModelsForMakeIdYear.prototype.GetModelsForMakeIdYear;
-
-  GetModelsForMakeYear = GetModelsForMakeYear.prototype.GetModelsForMakeYear;
-
-  GetParts = GetParts.prototype.GetParts;
-
-  GetVehicleTypesForMake =
-    GetVehicleTypesForMake.prototype.GetVehicleTypesForMake;
-
-  GetVehicleTypesForMakeId =
-    GetVehicleTypesForMakeId.prototype.GetVehicleTypesForMakeId;
-
-  GetVehicleVariableList =
-    GetVehicleVariableList.prototype.GetVehicleVariableList;
-
-  GetVehicleVariableValuesList =
-    GetVehicleVariableValuesList.prototype.GetVehicleVariableValuesList;
-
-  GetWMIsForManufacturer =
-    GetWMIsForManufacturer.prototype.GetWMIsForManufacturer;
+  DecodeVin = DecodeVin;
+  DecodeVinExtended = DecodeVinExtended;
+  DecodeVinValues = DecodeVinValues;
+  DecodeVinValuesExtended = DecodeVinValuesExtended;
+  DecodeWMI = DecodeWMI;
+  GetAllMakes = GetAllMakes;
+  GetAllManufacturers = GetAllManufacturers;
+  GetCanadianVehicleSpecifications = GetCanadianVehicleSpecifications;
+  GetEquipmentPlantCodes = GetEquipmentPlantCodes;
+  GetMakeForManufacturer = GetMakeForManufacturer;
+  GetMakesForManufacturerAndYear = GetMakesForManufacturerAndYear;
+  GetMakesForVehicleType = GetMakesForVehicleType;
+  GetManufacturerDetails = GetManufacturerDetails;
+  GetModelsForMake = GetModelsForMake;
+  GetModelsForMakeId = GetModelsForMakeId;
+  GetModelsForMakeIdYear = GetModelsForMakeIdYear;
+  GetModelsForMakeYear = GetModelsForMakeYear;
+  GetParts = GetParts;
+  GetVehicleTypesForMake = GetVehicleTypesForMake;
+  GetVehicleTypesForMakeId = GetVehicleTypesForMakeId;
+  GetVehicleVariableList = GetVehicleVariableList;
+  GetVehicleVariableValuesList = GetVehicleVariableValuesList;
+  GetWMIsForManufacturer = GetWMIsForManufacturer;
 }
 
 export { NHTSA };

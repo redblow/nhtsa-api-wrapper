@@ -1,49 +1,46 @@
 /**
- * @module api/actions/DecodeVinValuesExtended
+ * @module api/actions/DecodeVin
  * @category Actions
- * @description DecodeVinValuesExtended NHSTA Api Action.
+ * @description DecodeVin NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [DecodeVinValuesExtended](#.DecodeVinValuesExtended)
+ * > - Function: [DecodeVin](#.DecodeVin)
  * >
  * > **Types**
- * > - Type: [DecodeVinValuesExtendedResponse](#DecodeVinValuesExtendedResponse)
- * > - Type: [DecodeVinValuesExtendedResults](#DecodeVinValuesExtendedResults)
+ * > - Type: [DecodeVinResponse](#DecodeVinResponse)
+ * > - Type: [DecodeVinResults](#DecodeVinResults)
  *
  */
 
-/* Parent Class and Fetch Type */
-import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
+/* Fetch module */
+import { NewFetch, BASE_URL, FetchResponse /* Type */ } from './Fetch';
 /* Utiltiy Functions */
-import { getTypeof } from '../../utils';
+import { getTypeof } from '../utils';
 
 /**
- * This is exactly like the DecodeVinValues (flat format Results) method but provides additional information
- * on variables related to other NHTSA programs like
- * [NCSA](https://www.nhtsa.gov/research-data/national-center-statistics-and-analysis-ncsa), etc.
- * - The Results will be made available in a flat file format of a single object containing
- *   'key<string>: value<string>' results.
+ * The DecodeVin API Action will decode the VIN and the decoded output will be made available in the format of Key-value pairs.
  * - Providing `params.modelYear` allows for the decoding to specifically be done in the current,
  *   or older (pre-1980), model year ranges.
  *   - It is recommended to always provide `params.modelYear` if the model year is known at the time of decoding.
- * - This Action also supports partial VIN decoding (VINs that are less than 17 characters).
+ * - This API also supports partial VIN decoding (VINs that are less than 17 characters).
  *   - In this case, the VIN will be decoded partially with the available characters.
  *   - In case of partial VINs, a "*" could be used to indicate the unavailable characters.
+ *   - The 9th digit is not necessary.
  *
  * @async
  * @method
  * @param {string} vin - Vehicle Identification Number (full or partial).
  * @param {object} [params={}] - Query Search Parameters to append to the URL.
- * @param {string|number} [params.modelYear] - Optional Model Year search parameter.
- * @returns {(Promise<DecodeVinValuesExtendedResponse | Error>)} Api Response object.
+ * @param {number} [params.modelYear] - Optional Model Year search parameter.
+ * @returns {(Promise<DecodeVinResponse | Error>)} - Api Response object.
  */
-export const DecodeVinValuesExtended = async (
+export const DecodeVin = async (
   vin: string,
   params?: {
-    modelYear?: string | number;
+    modelYear?: number;
   }
-): Promise<DecodeVinValuesExtendedResponse | Error> => {
-  const action = 'DecodeVinValuesExtended';
+): Promise<DecodeVinResponse | Error> => {
+  const action = 'DecodeVin';
 
   /* Runtime typechecking */
   const typeofParams = getTypeof(params);
@@ -77,7 +74,7 @@ export const DecodeVinValuesExtended = async (
   }
 
   /* Build the query string to be appended to the URL*/
-  const queryString = await Fetch.buildQueryString(params).catch(err =>
+  const queryString = await NewFetch.buildQueryString(params).catch(err =>
     Promise.reject(new Error(`${action}, Error building query string: ${err}`))
   );
 
@@ -85,7 +82,7 @@ export const DecodeVinValuesExtended = async (
   const url = `${BASE_URL}/${action}/${vin}${queryString}`;
 
   /* Return the result */
-  return await Fetch.get(url)
+  return await NewFetch.get(url)
     .then(response => response)
     .catch(err =>
       Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
@@ -93,34 +90,33 @@ export const DecodeVinValuesExtended = async (
 };
 
 /**
- * Type representing the structure of objects found in the '{@link DecodeVinValuesExtendedResponse}.Results' array.
+ * Type representing the structure of objects found in the '{@link DecodeVinResponse}.Results' array.
  *
- * @memberof module:api/actions/DecodeVinValuesExtended
- * @alias DecodeVinValuesExtendedResults
+ * @memberof module:api/actions/DecodeVin
+ * @alias DecodeVinResults
  */
-export type DecodeVinValuesExtendedResults = {
-  /** Flat file format, single object containing keys and values of type string */
-  [name: string]: string;
+export type DecodeVinResults = {
+  Value: string | null;
+  ValueId: string | null;
+  Variable: string;
+  VariableId: number;
 };
 
 /**
- * Type representing the complete response returned by the DecodeVinValuesExtended API Action.
+ * Type representing the complete response returned by the DecodeVin API Action.
  *
- * @memberof module:api/actions/DecodeVinValuesExtended
- * @alias DecodeVinValuesExtendedResponse
+ * @memberof module:api/actions/DecodeVin
+ * @alias DecodeVinResponse
  */
-export type DecodeVinValuesExtendedResponse = {
+export type DecodeVinResponse = {
   /** A count of the items returned in the Results array. */
   Count: number;
   /** A message describing the Results array. */
   Message: string;
   /** Search terms (VIN, WMI, manufacturer, etc.) used in the request URL. */
   SearchCriteria: string;
-  /**
-   * The search results returned by the NHSTA API request.
-   * Flat file format, single object containing keys and values of type string
-   * */
-  Results: Array<DecodeVinValuesExtendedResults>;
+  /** The search results returned by the NHSTA API request. */
+  Results: Array<DecodeVinResults>;
   /** [Fetch API Response](https://github.github.io/fetch/#Response) properties. */
   FetchResponse: FetchResponse;
 };

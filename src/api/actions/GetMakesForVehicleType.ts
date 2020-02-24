@@ -4,7 +4,7 @@
  * @description GetMakesForVehicleType NHSTA Api Action.
  *
  * > **Module Exports**:
- * > - Class: [GetMakesForVehicleType](module-api_actions_GetMakesForVehicleType.GetMakesForVehicleType.html)
+ * > - Method: [GetMakesForVehicleType](#.GetMakesForVehicleType)
  * >
  * > **Types**
  * > - Type: [GetMakesForVehicleTypeResponse](#GetMakesForVehicleTypeResponse)
@@ -13,63 +13,52 @@
  */
 
 /* Parent Class and Fetch Type */
-import { Fetch /* Class */, FetchResponse /* Type */ } from '../Fetch';
+import { Fetch, BASE_URL, FetchResponse /* Type */ } from '../Fetch';
 /* Utiltiy Functions */
 import { getTypeof } from '../../utils';
 
 /**
- * Implemented by [NHTSA](module-api_NHTSA-NHTSA.html).
+ * This returns all the Makes in the vPIC dataset for a specified vehicle type (`typeName`),
+ * whose name is LIKE the vehicle type name in vPIC Dataset.
+ * - Vehicle `typeName` can be a partial name, or a full name for more specificity
+ *   (e.g., "Vehicle", "Moto", "Low Speed Vehicle", etc.).
  *
- * Extends [api/Fetch.Fetch](module-api_Fetch.Fetch.html).
- *
- * @category Actions
- * @hideconstructor
+ * @async
+ * @method
+ * @param {string} typeName - A partial or full vehicle type name.
+ * @returns {(Promise<GetMakesForVehicleTypeResponse | Error>)} Api Response object.
  */
-export class GetMakesForVehicleType extends Fetch {
-  /**
-   * This returns all the Makes in the vPIC dataset for a specified vehicle type (`typeName`),
-   * whose name is LIKE the vehicle type name in vPIC Dataset.
-   * - Vehicle `typeName` can be a partial name, or a full name for more specificity
-   *   (e.g., "Vehicle", "Moto", "Low Speed Vehicle", etc.).
-   *
-   * @async
-   * @param {string} typeName - A partial or full vehicle type name.
-   * @returns {(Promise<GetMakesForVehicleTypeResponse | Error>)} Api Response object.
-   */
-  async GetMakesForVehicleType(
-    typeName: string
-  ): Promise<GetMakesForVehicleTypeResponse | Error> {
-    const action = 'GetMakesForVehicleType';
+export const GetMakesForVehicleType = async (
+  typeName: string
+): Promise<GetMakesForVehicleTypeResponse | Error> => {
+  const action = 'GetMakesForVehicleType';
 
-    /* Runtime typechecking */
-    const typeofTypeName = getTypeof(typeName);
-    if (typeofTypeName !== 'string') {
-      return Promise.reject(
-        new Error(
-          `${action}, "typeName" argument is required and must be of type string, got: ` +
-            `<${typeofTypeName}> ${typeName}`
-        )
-      );
-    }
-
-    /* Build the 'default' query string to be appended to the URL*/
-    const queryString = await this.buildQueryString().catch((err: Error) =>
-      Promise.reject(
-        new Error(`${action}, Error building query string: ${err}`)
+  /* Runtime typechecking */
+  const typeofTypeName = getTypeof(typeName);
+  if (typeofTypeName !== 'string') {
+    return Promise.reject(
+      new Error(
+        `${action}, "typeName" argument is required and must be of type string, got: ` +
+          `<${typeofTypeName}> ${typeName}`
       )
     );
-
-    /* Build the final request URL*/
-    const url = `${this.baseUrl}/${action}/${typeName}${queryString}`;
-
-    /* Return the result */
-    return await this.get(url)
-      .then(response => response)
-      .catch((err: Error) =>
-        Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
-      );
   }
-}
+
+  /* Build the 'default' query string to be appended to the URL*/
+  const queryString = await Fetch.buildQueryString().catch((err: Error) =>
+    Promise.reject(new Error(`${action}, Error building query string: ${err}`))
+  );
+
+  /* Build the final request URL*/
+  const url = `${BASE_URL}/${action}/${typeName}${queryString}`;
+
+  /* Return the result */
+  return await Fetch.get(url)
+    .then(response => response)
+    .catch((err: Error) =>
+      Promise.reject(new Error(`${action}, Fetch.get() error: ${err}`))
+    );
+};
 
 /**
  * Type representing the structure of objects found in the '{@link GetMakesForVehicleTypeResponse}.Results' array.

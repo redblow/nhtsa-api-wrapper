@@ -7,7 +7,6 @@
 
     <script type="module">
       import {
-        isValidVin,
         Client
       } from '../../dev/dist/module/index.js';
 
@@ -22,7 +21,7 @@
       document
         .getElementById('isValidVin')
         .addEventListener('click', async function() {
-          const result = await isValidVin('WVWHV71K69W144983').catch(err => err);
+          const result = await Client.isValidVin('WVWHV71K69W144983').catch(err => err);
           console.log(`isValidVin result: ${result}`);
           document.getElementById('isValidVinResults').innerText = result;
         });
